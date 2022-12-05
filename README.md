@@ -15,6 +15,9 @@ SECRET_WORDS="an example of the twelwe word secret phrase separated by blank spa
 PASSWORD="wallet password"
 ```
 * Install or required python dependencies (selenium, dotenv ...)
+```
+pip3 install -r requirements.txt
+```
 * when setup is ready, run:
 ```
 python3 opensea.py
