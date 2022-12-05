@@ -4,26 +4,18 @@ This README would normally document whatever steps are necessary to get your app
 
 ### What is this repository for? ###
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+* Selenium - testing on OpenSea testnet
 
 ### How do I get set up? ###
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
-
-### Contribution guidelines ###
-
-* Writing tests
-* Code review
-* Other guidelines
-
-### Who do I talk to? ###
-
-* Repo owner or admin
-* Other community or team contact
+* All required drivers and extensions are already included in the repository (Chrome, Metamask)
+* Provide required environment variables in .env file
+```
+SECRET_WORDS="an example of the twelwe word secret phrase separated by blank space"
+PASSWORD="wallet password"
+```
+* Install or required python dependencies (selenium, dotenv ...)
+* when setup is ready, run:
+```
+python3 opensea.py
+```
