@@ -48,38 +48,42 @@ class SetForSaleOnOpensea(unittest.TestCase):
             WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, "article")))
             NFT = driver.find_elements(By.TAG_NAME, "article")[i]
             NFT.click()
-            time.sleep(3)
-            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH,
-                "//*[contains(text(), 'Sell')]")))
-            driver.find_element(By.XPATH, "//*[contains(text(), 'Sell')]").click()
+            time.sleep(5)
+            #WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH,
+            #    "//*[contains(text(), 'Sell')]")))
+            try:
+                driver.find_element(By.XPATH, "//*[contains(text(), 'Sell')]").click()
 
-            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, 'price')))
-            driver.find_element(By.ID, "price").send_keys("0.001")
-            driver.find_element(By.XPATH, "//*[contains(text(), 'Complete listing')]").click()
-            time.sleep(3)
-            driver.switch_to.window(chld)
-            driver.refresh()
+                WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, 'price')))
+                driver.find_element(By.ID, "price").send_keys("0.001")
+                driver.find_element(By.XPATH, "//*[contains(text(), 'Complete listing')]").click()
+                time.sleep(3)
+                driver.switch_to.window(chld)
+                driver.refresh()
 
-            # Seapport - arrow
-            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="app-content"]/div/div[3]/div/div[3]/div[1]/i')))
-            driver.find_element(By.XPATH, '//*[@id="app-content"]/div/div[3]/div/div[3]/div[1]/i').click()
+                # Seapport - arrow
+                WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="app-content"]/div/div[3]/div/div[3]/div[1]/i')))
+                driver.find_element(By.XPATH, '//*[@id="app-content"]/div/div[3]/div/div[3]/div[1]/i').click()
 
-            # Sign btn
-            WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="app-content"]/div/div[3]/div/div[4]/button[2]')))
-            driver.find_element(By.XPATH, '//*[@id="app-content"]/div/div[3]/div/div[4]/button[2]').click()
+                # Sign btn
+                WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="app-content"]/div/div[3]/div/div[4]/button[2]')))
+                driver.find_element(By.XPATH, '//*[@id="app-content"]/div/div[3]/div/div[4]/button[2]').click()
 
-            # Switch to OpenSea tab
-            driver.switch_to.window(parent)
-            time.sleep(1)
-            
-            # Close modal
-            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'i[aria-label="Close"]')))
-            driver.find_element(By.CSS_SELECTOR, 'i[aria-label="Close"]').click()
+                # Switch to OpenSea tab
+                driver.switch_to.window(parent)
+                time.sleep(1)
+
+                # Close modal
+                WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'i[aria-label="Close"]')))
+                driver.find_element(By.CSS_SELECTOR, 'i[aria-label="Close"]').click()
+            except: print('no sell button')
 
             # Go to profile page
             WebDriverWait(driver, 100).until(EC.presence_of_element_located((By.XPATH,
                 '//*[@id="__next"]/div/div[1]/div/nav/ul/div[2]/div/div[1]/li/a/span/img')))
-            driver.find_element(By.XPATH, '//*[@id="__next"]/div/div[1]/div/nav/ul/div[2]/div/div[1]/li/a/span/img').click()
+            try:
+                driver.find_element(By.XPATH, '//*[@id="__next"]/div/div[1]/div/nav/ul/div[2]/div/div[1]/li/a/span/img').click()
+            except: print('button not found')
             time.sleep(3)
 
     def test_SetForSaleOnOpensea(self):
@@ -102,11 +106,13 @@ class SetForSaleOnOpensea(unittest.TestCase):
             '//*[@id="__next"]/div/aside[2]/div[2]/div/div[2]/ul/li[1]/button')))
         driver.find_element(By.XPATH, '//*[@id="__next"]/div/aside[2]/div[2]/div/div[2]/ul/li[1]/button').click()
 
-        time.sleep(3)
+        time.sleep(5)
 
         parent = driver.window_handles[0]
         chld = driver.window_handles[1]
         driver.switch_to.window(chld)
+
+        time.sleep(5)
 
         driver.find_element(By.XPATH, '//*[@id="app-content"]/div/div[2]/div/div/div/button').click()
         driver.find_element(By.XPATH, '//*[@id="app-content"]/div/div[2]/div/div/div/div[5]/div[1]/footer/button[1]').click()
