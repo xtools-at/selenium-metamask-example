@@ -1,12 +1,17 @@
 import os
 import time
 from dotenv import load_dotenv
+import logging
 import unittest
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+
+numOfNFTs = 500
+offset = 120
+url = "https://testnets.opensea.io/assets/goerli/0x1f419b9469d641d333805c4054ca3b65af54d315"
 
 EXTENSION_PATH = os.getcwd() + "/extension_10_22_1_0.crx"
 chrome_driver = os.getcwd() + "/chromedriver"
@@ -32,28 +37,20 @@ class SetForSaleOnOpensea(unittest.TestCase):
         driver.get("https://testnets.opensea.io/")
         if not "OpenSea" in driver.title:
             raise Exception("Unable to load google page!")
-    
+
     def typeSecretWords(self, secretWords):
         listOfSecretWords = secretWords.split()
 
         for i in range(len(listOfSecretWords)):
             driver.find_element(By.XPATH, f'//*[@id="import-srp__srp-word-{i}"]').send_keys(listOfSecretWords[i])
 
-    
+
     def setForSale(self, chld, parent):
-        numOfNFTs = len(driver.find_elements(By.TAG_NAME, "article"))
-        print(numOfNFTs)
-
         for i in range(numOfNFTs):
-            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, "article")))
-            NFT = driver.find_elements(By.TAG_NAME, "article")[i]
-            NFT.click()
-            time.sleep(5)
-            #WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH,
-            #    "//*[contains(text(), 'Sell')]")))
-            try:
-                driver.find_element(By.XPATH, "//*[contains(text(), 'Sell')]").click()
+            driver.get(url + '/' + str(i + offset) + '/sell')
+            time.sleep(3)
 
+            try:
                 WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, 'price')))
                 driver.find_element(By.ID, "price").send_keys("0.001")
                 driver.find_element(By.XPATH, "//*[contains(text(), 'Complete listing')]").click()
@@ -71,20 +68,10 @@ class SetForSaleOnOpensea(unittest.TestCase):
 
                 # Switch to OpenSea tab
                 driver.switch_to.window(parent)
-                time.sleep(1)
+                time.sleep(3)
 
-                # Close modal
-                WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'i[aria-label="Close"]')))
-                driver.find_element(By.CSS_SELECTOR, 'i[aria-label="Close"]').click()
-            except: print('no sell button')
-
-            # Go to profile page
-            WebDriverWait(driver, 100).until(EC.presence_of_element_located((By.XPATH,
-                '//*[@id="__next"]/div/div[1]/div/nav/ul/div[2]/div/div[1]/li/a/span/img')))
-            try:
-                driver.find_element(By.XPATH, '//*[@id="__next"]/div/div[1]/div/nav/ul/div[2]/div/div[1]/li/a/span/img').click()
-            except: print('button not found')
-            time.sleep(3)
+            except Exception as e:
+                logging.error('error setting for sale', exc_info=e)
 
     def test_SetForSaleOnOpensea(self):
         parent = driver.window_handles[1]
@@ -106,13 +93,13 @@ class SetForSaleOnOpensea(unittest.TestCase):
             '//*[@id="__next"]/div/aside[2]/div[2]/div/div[2]/ul/li[1]/button')))
         driver.find_element(By.XPATH, '//*[@id="__next"]/div/aside[2]/div[2]/div/div[2]/ul/li[1]/button').click()
 
-        time.sleep(5)
+        time.sleep(3)
 
         parent = driver.window_handles[0]
         chld = driver.window_handles[1]
         driver.switch_to.window(chld)
 
-        time.sleep(5)
+        time.sleep(3)
 
         driver.find_element(By.XPATH, '//*[@id="app-content"]/div/div[2]/div/div/div/button').click()
         driver.find_element(By.XPATH, '//*[@id="app-content"]/div/div[2]/div/div/div/div[5]/div[1]/footer/button[1]').click()
@@ -146,14 +133,14 @@ class SetForSaleOnOpensea(unittest.TestCase):
         driver.find_element(By.XPATH, '//*[@id="app-content"]/div/div[2]/div/div[2]/li[2]').click()
         #  Close Metamask settings
         driver.find_element(By.XPATH, '//*[@id="app-content"]/div/div[3]/div/div[1]/div[1]/div[2]').click()
-        
+
         driver.switch_to.window(parent)
 
         # Metamask Logo 
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH,
             '//*[@id="__next"]/div/aside[2]/div[2]/div/div[2]/ul/li[1]/button')))
         driver.find_element(By.XPATH, '//*[@id="__next"]/div/aside[2]/div[2]/div/div[2]/ul/li[1]/button').click()
-        
+
         driver.switch_to.window(chld)
         driver.refresh()
         #  Next btn
@@ -165,17 +152,16 @@ class SetForSaleOnOpensea(unittest.TestCase):
         WebDriverWait(driver, 100).until(EC.presence_of_element_located((By.XPATH,
             '//*[@id="app-content"]/div/div[2]/div/div[2]/div[2]/div[2]/footer/button[2]')))
         driver.find_element(By.XPATH, '//*[@id="app-content"]/div/div[2]/div/div[2]/div[2]/div[2]/footer/button[2]').click()
-        
+
         driver.switch_to.window(parent)
         # Go to profile page
         WebDriverWait(driver, 100).until(EC.presence_of_element_located((By.XPATH,
             '//*[@id="__next"]/div/div[1]/div/nav/ul/div[2]/div/div[1]/li/a/span/img')))
         driver.find_element(By.XPATH, '//*[@id="__next"]/div/div[1]/div/nav/ul/div[2]/div/div[1]/li/a/span/img').click()
         time.sleep(3)
-        
+
         self.setForSale(chld, parent)
 
-    
     def tearDown(self):
         driver.quit()
 
