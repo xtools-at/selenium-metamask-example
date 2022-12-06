@@ -7,14 +7,17 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 
 EXTENSION_PATH = os.getcwd() + "/extension_10_22_1_0.crx"
-chrome_driver = os.getcwd() + "/chromedriver"
 
 chrome_options = Options()
 chrome_options.add_argument("--window-size=1920x1080")
 chrome_options.add_extension(EXTENSION_PATH)
-driver = webdriver.Chrome(options=chrome_options, executable_path=chrome_driver)
+driver = webdriver.Chrome(
+    options=chrome_options, service=Service(ChromeDriverManager().install())
+)
 
 
 class SetForSaleOnOpensea(unittest.TestCase):
