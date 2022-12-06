@@ -42,15 +42,15 @@ class SetForSaleOnOpensea(unittest.TestCase):
     
     def setForSale(self, chld, parent):
         numOfNFTs = len(driver.find_elements(By.TAG_NAME, "article"))
-        print(numOfNFTs)
+        print(f"Number of total NFTs detected: {numOfNFTs}")
 
         for i in range(numOfNFTs):
             WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, "article")))
             NFT = driver.find_elements(By.TAG_NAME, "article")[i]
+            NFT_ID = NFT.find_element(By.TAG_NAME, "img").get_attribute("alt")
+            print(f'Trying to list NFT: {NFT_ID}')
             NFT.click()
             time.sleep(5)
-            #WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH,
-            #    "//*[contains(text(), 'Sell')]")))
             try:
                 driver.find_element(By.XPATH, "//*[contains(text(), 'Sell')]").click()
 
@@ -62,12 +62,12 @@ class SetForSaleOnOpensea(unittest.TestCase):
                 driver.refresh()
 
                 # Seapport - arrow
-                WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="app-content"]/div/div[3]/div/div[3]/div[1]/i')))
-                driver.find_element(By.XPATH, '//*[@id="app-content"]/div/div[3]/div/div[3]/div[1]/i').click()
+                WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'i[title="Scroll down"]')))
+                driver.find_element(By.CSS_SELECTOR, 'i[title="Scroll down"]').click()
 
                 # Sign btn
-                WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="app-content"]/div/div[3]/div/div[4]/button[2]')))
-                driver.find_element(By.XPATH, '//*[@id="app-content"]/div/div[3]/div/div[4]/button[2]').click()
+                WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'button[data-testid="signature-sign-button"]')))
+                driver.find_element(By.CSS_SELECTOR, 'button[data-testid="signature-sign-button"]').click()
 
                 # Switch to OpenSea tab
                 driver.switch_to.window(parent)
@@ -76,13 +76,13 @@ class SetForSaleOnOpensea(unittest.TestCase):
                 # Close modal
                 WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'i[aria-label="Close"]')))
                 driver.find_element(By.CSS_SELECTOR, 'i[aria-label="Close"]').click()
-            except: print('no sell button')
+            except: print(f'Sell button not present for NFT: {NFT_ID}')
 
             # Go to profile page
-            WebDriverWait(driver, 100).until(EC.presence_of_element_located((By.XPATH,
-                '//*[@id="__next"]/div/div[1]/div/nav/ul/div[2]/div/div[1]/li/a/span/img')))
+            WebDriverWait(driver, 100).until(EC.presence_of_element_located((By.CSS_SELECTOR,
+                'img[alt="Account"]')))
             try:
-                driver.find_element(By.XPATH, '//*[@id="__next"]/div/div[1]/div/nav/ul/div[2]/div/div[1]/li/a/span/img').click()
+                driver.find_element(By.CSS_SELECTOR, 'img[alt="Account"]').click()
             except: print('button not found')
             time.sleep(3)
 
@@ -97,14 +97,14 @@ class SetForSaleOnOpensea(unittest.TestCase):
         driver.switch_to.window(parent)
 
         #  Wallet button
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH,
-            '//*[@id="__next"]/div/div[1]/div/nav/ul/div[2]/div/div[2]/li/div/button')))
-        driver.find_element(By.XPATH, '//*[@id="__next"]/div/div[1]/div/nav/ul/div[2]/div/div[2]/li/div/button').click()
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR,
+            'i[title="Wallet"]')))
+        driver.find_element(By.CSS_SELECTOR, 'i[title="Wallet"]').click()
         time.sleep(0.5)
         # Metamask Logo
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH,
-            '//*[@id="__next"]/div/aside[2]/div[2]/div/div[2]/ul/li[1]/button')))
-        driver.find_element(By.XPATH, '//*[@id="__next"]/div/aside[2]/div[2]/div/div[2]/ul/li[1]/button').click()
+            "//*[contains(text(), 'MetaMask')]")))
+        driver.find_element(By.XPATH, "//*[contains(text(), 'MetaMask')]").click()
 
         time.sleep(5)
 
@@ -112,65 +112,64 @@ class SetForSaleOnOpensea(unittest.TestCase):
         chld = driver.window_handles[1]
         driver.switch_to.window(chld)
 
-        time.sleep(5)
-
-        driver.find_element(By.XPATH, '//*[@id="app-content"]/div/div[2]/div/div/div/button').click()
-        driver.find_element(By.XPATH, '//*[@id="app-content"]/div/div[2]/div/div/div/div[5]/div[1]/footer/button[1]').click()
-        driver.find_element(By.XPATH, '//*[@id="app-content"]/div/div[2]/div/div/div[2]/div/div[2]/div[1]/button').click()
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR,
+            '[data-testid="first-time-flow__button"]')))
+        driver.find_element(By.CSS_SELECTOR, '[data-testid="first-time-flow__button"]').click()
+        driver.find_element(By.CSS_SELECTOR, '[data-testid="page-container-footer-cancel"]').click()
+        driver.find_element(By.CSS_SELECTOR, '[data-testid="import-wallet-button"]').click()
 
         self.typeSecretWords(self.SECRET_WORDS)
 
-        driver.find_element(By.XPATH, '//*[@id="password"]').send_keys('12345678')
-        driver.find_element(By.XPATH, '//*[@id="confirm-password"]').send_keys('12345678')
+        driver.find_element(By.ID, 'password').send_keys('12345678')
+        driver.find_element(By.ID, 'confirm-password').send_keys('12345678')
 
-        driver.find_element(By.XPATH, '//*[@id="create-new-vault__terms-checkbox"]').click()
-        driver.find_element(By.XPATH, '//*[@id="app-content"]/div/div[2]/div/div/div[2]/form/button').click()
-
+        driver.find_element(By.ID, 'create-new-vault__terms-checkbox').click()
+        driver.find_element(By.CSS_SELECTOR, '[type="submit"]').click()
 
         # All done
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH,
-            '//*[@id="app-content"]/div/div[2]/div/div/button')))
-        driver.find_element(By.XPATH, '//*[@id="app-content"]/div/div[2]/div/div/button').click()
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR,
+            '[data-testid="EOF-complete-button"]')))
+        driver.find_element(By.CSS_SELECTOR, '[data-testid="EOF-complete-button"]').click()
 
         # Network
-        driver.find_element(By.XPATH, '//*[@id="app-content"]/div/div[1]/div/div[2]/div/div').click()
+        driver.find_element(By.CSS_SELECTOR, '[data-testid="network-display"]').click()
         # Show/hide testnets
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH,
-            '//*[@id="app-content"]/div/div[2]/div/div[1]/div[3]/span/a')))
-
-        button = driver.find_element(By.XPATH, '//*[@id="app-content"]/div/div[2]/div/div[1]/div[3]/span/a')
+            "//*[contains(text(), 'Show/hide')]")))
+        button = driver.find_element(By.XPATH, "//*[contains(text(), 'Show/hide')]")
         driver.execute_script("arguments[0].click();", button)
+
         driver.find_element(By.XPATH, '//*[@id="app-content"]/div/div[3]/div/div[2]/div[2]/div[2]/div[8]/div[2]/div/label/div[1]').click()
-        driver.find_element(By.XPATH, '//*[@id="app-content"]/div/div[1]/div/div[2]/div/div').click()
+        driver.find_element(By.CSS_SELECTOR, '[data-testid="network-display"]').click()
         time.sleep(0.5)
-        driver.find_element(By.XPATH, '//*[@id="app-content"]/div/div[2]/div/div[2]/li[2]').click()
+        driver.find_element(By.CSS_SELECTOR, '[data-testid="goerli-network-item"]').click()
         #  Close Metamask settings
-        driver.find_element(By.XPATH, '//*[@id="app-content"]/div/div[3]/div/div[1]/div[1]/div[2]').click()
+        driver.find_element(By.CSS_SELECTOR, '[class="settings-page__header__title-container__close-button"]').click()
         
         driver.switch_to.window(parent)
 
-        # Metamask Logo 
+        # Metamask Logo
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH,
-            '//*[@id="__next"]/div/aside[2]/div[2]/div/div[2]/ul/li[1]/button')))
-        driver.find_element(By.XPATH, '//*[@id="__next"]/div/aside[2]/div[2]/div/div[2]/ul/li[1]/button').click()
-        
+            "//*[contains(text(), 'MetaMask')]")))
+        driver.find_element(By.XPATH, "//*[contains(text(), 'MetaMask')]").click()
+
         driver.switch_to.window(chld)
         driver.refresh()
         #  Next btn
         WebDriverWait(driver, 100).until(EC.presence_of_element_located((By.XPATH,
-            '//*[@id="app-content"]/div/div[2]/div/div[3]/div[2]/button[2]')))
-        driver.find_element(By.XPATH, '//*[@id="app-content"]/div/div[2]/div/div[3]/div[2]/button[2]').click()
+            "//*[contains(text(), 'Next')]")))
+        driver.find_element(By.XPATH, "//*[contains(text(), 'Next')]").click()
 
         # Connect btn
-        WebDriverWait(driver, 100).until(EC.presence_of_element_located((By.XPATH,
-            '//*[@id="app-content"]/div/div[2]/div/div[2]/div[2]/div[2]/footer/button[2]')))
-        driver.find_element(By.XPATH, '//*[@id="app-content"]/div/div[2]/div/div[2]/div[2]/div[2]/footer/button[2]').click()
+        WebDriverWait(driver, 100).until(EC.presence_of_element_located((By.CSS_SELECTOR,
+            '[data-testid="page-container-footer-next"]')))
+        driver.find_element(By.CSS_SELECTOR, '[data-testid="page-container-footer-next"]').click()
         
         driver.switch_to.window(parent)
         # Go to profile page
-        WebDriverWait(driver, 100).until(EC.presence_of_element_located((By.XPATH,
-            '//*[@id="__next"]/div/div[1]/div/nav/ul/div[2]/div/div[1]/li/a/span/img')))
-        driver.find_element(By.XPATH, '//*[@id="__next"]/div/div[1]/div/nav/ul/div[2]/div/div[1]/li/a/span/img').click()
+        WebDriverWait(driver, 100).until(EC.presence_of_element_located((By.CSS_SELECTOR,
+                'img[alt="Account"]')))
+        driver.find_element(By.CSS_SELECTOR, 'img[alt="Account"]').click()
         time.sleep(3)
         
         self.setForSale(chld, parent)
