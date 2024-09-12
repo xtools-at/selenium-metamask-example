@@ -9,8 +9,9 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-numOfNFTs = 500
-offset = 120
+price="0.003"
+numOfNFTs = 100
+offset = 1385
 url = "https://testnets.opensea.io/assets/goerli/0x1f419b9469d641d333805c4054ca3b65af54d315"
 
 EXTENSION_PATH = os.getcwd() + "/extension_10_22_1_0.crx"
@@ -34,9 +35,9 @@ class SetForSaleOnOpensea(unittest.TestCase):
             driver.quit()
             raise Exception('Password not defined. Please provide password in the .env file')
 
-        driver.get("https://testnets.opensea.io/")
+        driver.get("https://testnets.opensea.io/collection/snakes-on-a-chain-goerli")
         if not "OpenSea" in driver.title:
-            raise Exception("Unable to load google page!")
+            raise Exception("Unable to load page!")
 
     def typeSecretWords(self, secretWords):
         listOfSecretWords = secretWords.split()
@@ -52,7 +53,7 @@ class SetForSaleOnOpensea(unittest.TestCase):
 
             try:
                 WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, 'price')))
-                driver.find_element(By.ID, "price").send_keys("0.001")
+                driver.find_element(By.ID, "price").send_keys(price)
                 driver.find_element(By.XPATH, "//*[contains(text(), 'Complete listing')]").click()
                 time.sleep(3)
                 driver.switch_to.window(chld)
@@ -136,7 +137,7 @@ class SetForSaleOnOpensea(unittest.TestCase):
 
         driver.switch_to.window(parent)
 
-        # Metamask Logo 
+        # Metamask Logo
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH,
             '//*[@id="__next"]/div/aside[2]/div[2]/div/div[2]/ul/li[1]/button')))
         driver.find_element(By.XPATH, '//*[@id="__next"]/div/aside[2]/div[2]/div/div[2]/ul/li[1]/button').click()
@@ -155,10 +156,10 @@ class SetForSaleOnOpensea(unittest.TestCase):
 
         driver.switch_to.window(parent)
         # Go to profile page
-        WebDriverWait(driver, 100).until(EC.presence_of_element_located((By.XPATH,
-            '//*[@id="__next"]/div/div[1]/div/nav/ul/div[2]/div/div[1]/li/a/span/img')))
-        driver.find_element(By.XPATH, '//*[@id="__next"]/div/div[1]/div/nav/ul/div[2]/div/div[1]/li/a/span/img').click()
-        time.sleep(3)
+        #WebDriverWait(driver, 100).until(EC.presence_of_element_located((By.XPATH,
+        #    '//*[@id="__next"]/div/div[1]/div/nav/ul/div[2]/div/div[1]/li/a/span/img')))
+        #driver.find_element(By.XPATH, '//*[@id="__next"]/div/div[1]/div/nav/ul/div[2]/div/div[1]/li/a/span/img').click()
+        #time.sleep(3)
 
         self.setForSale(chld, parent)
 
